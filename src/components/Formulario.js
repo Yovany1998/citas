@@ -9,7 +9,7 @@ import { Modal,
         ScrollView,
 
 } from 'react-native';
-
+import DatePicker from 'react-native-date-picker';
 
 import { LogBox } from 'react-native';
 
@@ -90,7 +90,9 @@ const Formulario = ({modalVisible}) => {
 
         <View style={styles.campo}>
         <Text style={styles.label}>Fecha Alta</Text>
-
+<DatePicker
+date={fecha}
+/>
  
         </View>
 
