@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal,
         Text,
         Button,
@@ -7,6 +7,8 @@ import { Modal,
         TextInput,
         View,
         ScrollView,
+        Pressable,
+        Alert,
 
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
@@ -19,7 +21,7 @@ LogBox.ignoreLogs(['Warning: ...']);
 // Ignore all log notifications:
 LogBox.ignoreAllLogs();
 
-const Formulario = ({modalVisible}) => {
+const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paciente: pacienteObj}) => {
     
     const [paciente,setPaciente]= useState('')
     const [propietario,setPropietario]= useState('')
@@ -27,6 +29,48 @@ const Formulario = ({modalVisible}) => {
     const [telefono,setTelefono]= useState('')
     const [fecha,setFecha]= useState(new Date())
     const [sintomas,setSintomas]= useState('')
+
+    useEffect(() => {
+        // if(Object.keys(pacienteObj).length > 0){
+            // setPaciente(pacienteObj.paciente)
+            // setPropietario(pacienteObj.propietario)
+            // setEmail(pacienteObj.email)
+            // setTelefono(pacienteObj.telefono)
+            // setFecha(pacienteObj.fecha)
+            // setSintomas(pacienteObj.sintomas)
+
+        // }
+    }, [])
+
+    const handlerCita = ()=>{
+        //validar
+        if([paciente, propietario, email, fecha. sintomas].includes('')){
+            Alert.alert(
+                'Error',
+                'Todos los campos deben ser obligatorios',
+                // [{text: 'Cancelar'}, {text: 'Aceptar'}]
+            )
+            return
+        }
+        const nuevoPaciente={
+            id: Date.now(),
+            paciente,
+            propietario,
+            email,
+            telefono,
+            fecha,
+            sintomas
+        }
+        setPacientes([...pacientes, nuevoPaciente])
+        setModalVisible(!modalVisible)
+
+        setPaciente('')
+        setPropietario('')
+        setEmail('')
+        setFecha(new Date())
+        setTelefono('')
+        setSintomas('')
+    }
 
   return (
 
@@ -37,9 +81,18 @@ const Formulario = ({modalVisible}) => {
         <SafeAreaView style={styles.contenido}>
             <ScrollView>           
         <Text style={styles.titulo}>Nueva {''}
-        <Text style={styles.tituloBold}>Cita</Text>
-        
+        <Text style={styles.tituloBold}>Cita</Text>        
         </Text>
+
+        {/* Boton de cancelar */}
+        <Pressable 
+        style={styles.btnCancelar}
+        onLongPress={()=>setModalVisible(!modalVisible)}
+        >
+            <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
+        </Pressable>
+
+        {/* Cada campo */}
         <View style={styles.campo}>
         <Text style={styles.label}>Nombre Paciente</Text>
         <TextInput
@@ -90,10 +143,13 @@ const Formulario = ({modalVisible}) => {
 
         <View style={styles.campo}>
         <Text style={styles.label}>Fecha Alta</Text>
-<DatePicker
-date={fecha}
-/>
- 
+        <DatePicker
+        style={styles.fechaContenedor}
+        date={fecha}
+        locale= 'es'
+        onDateChange={()=> setFecha(date)}
+        />
+        
         </View>
 
         <View style={styles.campo}>
@@ -109,6 +165,15 @@ date={fecha}
         />
 
         </View>
+
+        {/* Ultimo boton */}
+        <Pressable 
+      style={styles.btnNuevaCita}
+      onPress={handlerCita}
+        >
+            <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+        </Pressable>
+
         </ScrollView>
         </SafeAreaView>
       
@@ -133,11 +198,28 @@ const styles = StyleSheet.create({
         fontWeight: '900',
 
     },
+    btnCancelar:{
+    marginTop: 20,
+    backgroundColor: '#4827A4',
+    marginHorizontal: 30,
+    padding: 20,
+    borderRadius: 10,
+    borderWidth:1,
+    borderColor: '#FFF'
+    },
+    btnCancelarTexto:{
+    color: 'FFF',
+    textAlign: 'center',
+    fontWeight: '900',
+    fontSize: 15,
+    textTransform: 'uppercase'
+    },
     campo:{
         marginTop: 10,
         marginHorizontal:30,
        
     },
+
     label:{
         color:'#FFF',
         marginBottom: 10,
@@ -146,14 +228,33 @@ const styles = StyleSheet.create({
         fontWeight:'60'
     },
     input:{
-        backgroundColor: '#FFF',
+        backgroundColor: '#6827A4',
         padding: 15,
         borderRadius:10,
   
     },
     sintomasInput:{
         height:100
-    }
+    },
+    fechaContenedor:{
+        backgroundColor:'#FFF',
+        borderRadius: 10
+    },
+    btnNuevaCita:{
+        marginVertical: 50,
+        backgroundColor: '#F59E0B',
+        paddingVertical:15,
+        marginHorizontal: 30,
+        borderRadius: 10
+    },
+    btnNuevaCitaTexto:{
+        textAlign: 'center',
+        color: '#5827A4',
+        textTransform: 'uppercase',
+        fontWeight: '900',
+        fontSize: 16
+
+    },
 });
 
 
