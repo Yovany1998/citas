@@ -13,16 +13,18 @@ import { Modal,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-import { LogBox } from 'react-native';
 
-// Ignore log notification by message:
-LogBox.ignoreLogs(['Warning: ...']);
 
-// Ignore all log notifications:
-LogBox.ignoreAllLogs();
-
-const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paciente: pacienteObj}) => {
+const Formulario = ({
+    modalVisible,
+    cerrarModal,
+     setPacientes,
+     pacientes, 
+     paciente: pacienteObj,
+    setPaciente : setPacienteApp}) => {
     
+ 
+    const [id, setId]= useState('')
     const [paciente,setPaciente]= useState('')
     const [propietario,setPropietario]= useState('')
     const [email,setEmail]= useState('')
@@ -31,16 +33,17 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
     const [sintomas,setSintomas]= useState('')
 
     useEffect(() => {
-        // if(Object.keys(pacienteObj).length > 0){
-            // setPaciente(pacienteObj.paciente)
-            // setPropietario(pacienteObj.propietario)
-            // setEmail(pacienteObj.email)
-            // setTelefono(pacienteObj.telefono)
-            // setFecha(pacienteObj.fecha)
-            // setSintomas(pacienteObj.sintomas)
+        if(Object.keys(pacienteObj).length > 0){
+            setId(pacienteObj.id)
+            setPaciente(pacienteObj.paciente)
+            setPropietario(pacienteObj.propietario)
+            setEmail(pacienteObj.email)
+            setTelefono(pacienteObj.telefono)
+            setFecha(pacienteObj.fecha)
+            setSintomas(pacienteObj.sintomas)
 
-        // }
-    }, [])
+        }
+    }, [pacienteObj])
 
     const handlerCita = ()=>{
         //validar
@@ -52,8 +55,11 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
             )
             return
         }
+
+        //Revisar si es un registro nuevo o edición
+
         const nuevoPaciente={
-            id: Date.now(),
+            // id: Date.now(),
             paciente,
             propietario,
             email,
@@ -61,9 +67,24 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
             fecha,
             sintomas
         }
-        setPacientes([...pacientes, nuevoPaciente])
-        setModalVisible(!modalVisible)
 
+        if(id){
+            //Editando
+            nuevoPaciente.id = id
+            const pacientesActualizados = pacientes.map(pacienteState =>
+            pacienteState.id === nuevoPaciente.id ? nuevoPaciente: pacienteState
+            )
+            setPacientes(pacientesActualizados)
+            setPacienteApp({})
+        }else{
+            //Nuevo registro
+            nuevoPaciente.id =Date.now()
+            setPacientes([...pacientes, nuevoPaciente])
+        }
+
+   
+        cerrarModal()
+        setId('')
         setPaciente('')
         setPropietario('')
         setEmail('')
@@ -80,14 +101,25 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
     >
         <SafeAreaView style={styles.contenido}>
             <ScrollView>           
-        <Text style={styles.titulo}>Nueva {''}
+        <Text style={styles.titulo}>{pacienteObj.id ?
+         'Editar': 'Agregar'} {''}
         <Text style={styles.tituloBold}>Cita</Text>        
         </Text>
 
         {/* Boton de cancelar */}
         <Pressable 
         style={styles.btnCancelar}
-        onLongPress={()=>setModalVisible(!modalVisible)}
+        onLongPress={()=>{
+            cerrarModal()
+            setPacienteApp({})
+            setId('')
+            setPaciente('')
+            setPropietario('')
+            setEmail('')
+            setFecha(new Date())
+            setTelefono('')
+            setSintomas('')
+        }}
         >
             <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
         </Pressable>
@@ -100,7 +132,8 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
         placeholder='Nombre Paciente'
         placeholderTextColor={'#666'}
         value={paciente}
-        onChangeText={setPaciente}
+        onChangeText={setPaciente} 
+
         />
         </View>
 
@@ -147,7 +180,7 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
         style={styles.fechaContenedor}
         date={fecha}
         locale= 'es'
-        onDateChange={()=> setFecha(date)}
+        onDateChange={ (date) => setFecha(date)}
         />
         
         </View>
@@ -168,10 +201,11 @@ const Formulario = ({modalVisible, setModalVisible, setPacientes,pacientes, paci
 
         {/* Ultimo boton */}
         <Pressable 
-      style={styles.btnNuevaCita}
-      onPress={handlerCita}
+        style={styles.btnNuevaCita}
+        onPress={handlerCita}
         >
-            <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+            <Text style={styles.btnNuevaCitaTexto}>{pacienteObj.id ?
+         'Editar': 'Agregar'} {''}Paciente</Text>
         </Pressable>
 
         </ScrollView>
@@ -199,20 +233,20 @@ const styles = StyleSheet.create({
 
     },
     btnCancelar:{
-    marginTop: 20,
-    backgroundColor: '#4827A4',
-    marginHorizontal: 30,
-    padding: 20,
-    borderRadius: 10,
-    borderWidth:1,
-    borderColor: '#FFF'
+        marginTop: 20,
+        backgroundColor: '#4827A4',
+        marginHorizontal: 30,
+        padding: 20,
+        borderRadius: 10,
+        borderWidth:1,
+        borderColor: '#FFF'
     },
     btnCancelarTexto:{
-    color: 'FFF',
-    textAlign: 'center',
-    fontWeight: '900',
-    fontSize: 15,
-    textTransform: 'uppercase'
+        color: 'FFF',
+        textAlign: 'center',
+        fontWeight: '900',
+        fontSize: 15,
+        textTransform: 'uppercase'
     },
     campo:{
         marginTop: 10,

@@ -6,15 +6,18 @@ import {
   Pressable,
   Modal,
   FlatList,
+  Alert,
 } from 'react-native';
 
 import Formulario from './src/components/Formulario';
 import Paciente from './src/components/Paciente';
+import InformacionPaciente from './src/components/InformacionPaciente';
 const App=  () => {
 //Los hooks se colocan en la parte superior
 const[modalVisible, setModalVisible] = useState(false)
 const[pacientes,setPacientes] = useState([])
 const[paciente,setPaciente] = useState({})
+const [modalPaciente, setModalPaciente]= useState(false)
 
 const pacienteEditar = id => {
   const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
@@ -22,7 +25,27 @@ const pacienteEditar = id => {
 setPaciente(pacienteEditar[0])
 }
 
+const pacienteEliminar = id => {
+  Alert.alert(
+    '¿Deseas eliminar este paciente?',
+    'Un paciente eliminado no se puede recuperar',
+    [
+      {text: 'Cancelar'},
+      { text: 'Si, Eliminar',onPress: () =>{
+        const pacientesActualizados = pacientes.filter(
+          pacientesState => pacientesState.id !== id
+        )
+        setPacientes(pacientesActualizados)
+      }}
 
+    ]
+  )
+}
+
+//arrow funcion para desmontar el formulario
+const cerrarModal = () =>(
+  setModalVisible(false)
+)
   return (
     <SafeAreaView style={styles.container}>
   <Text style={styles.titulo}>Administracion de citas {''}</Text>
@@ -39,33 +62,52 @@ setPaciente(pacienteEditar[0])
     {pacientes.length === 0 ?
     <Text style={styles.noPacientes}>No hay pacientes aun</Text>:
    <FlatList
-   style={styles.listado}
-   data={pacientes}
-   keyExtractor={(item) =>item.id}
-   renderItem={({item})=>{
-    return(
-    <Paciente
-    item={item}
-    setModalVisible={setModalVisible}
-    pacienteEditar={pacienteEditar}
-    />
-      )
-   }
-   
-  
-  }
+    style={styles.listado}
+    data={pacientes}
+    keyExtractor={(item) =>item.id}
+    renderItem={({item})=>{
+      return(
+      <Paciente
+      item={item}
+      setModalVisible={setModalVisible}
+      setPaciente={setPaciente}
+      pacienteEditar={pacienteEditar}
+      pacienteEliminar={pacienteEliminar}
+      setModalPaciente={setModalPaciente}
+      />
+        )
+    } 
+    }
    />
     
     }
 
     {/* Props para pasar datos de un formulario a otro */}
-  <Formulario
-    modalVisible={modalVisible}
-    setModalVisible={setModalVisible}
-    pacientes={pacientes}
-    setPacientes={setPacientes}
-    
-  />
+    {/* Lo ideal seria usar el modal para desmontarlo el solo, pero
+    por si usamos un formulario lo condicionamos para que no siempre se monte */}
+    {modalVisible && (
+
+<Formulario
+cerrarModal={cerrarModal}
+pacientes={pacientes}
+setPacientes={setPacientes}
+paciente = {paciente}
+setPaciente= {setPaciente}
+
+/>
+    )}
+
+
+  <Modal
+  visible={modalPaciente}
+  animationType='fade'
+  >
+    <InformacionPaciente
+    paciente={paciente}
+    setPaciente={setPaciente}
+    setModalPaciente={setModalPaciente}
+    />
+  </Modal>
     </SafeAreaView>
 
   );
@@ -89,24 +131,24 @@ tituloBold: {
   textAlign:'center',
 },
 btnNuevaCita:{
-backgroundColor: '#6D28D9',
-padding: 15,
-marginTop:30,
-marginHorizontal: 20,
-borderRadius:10
+  backgroundColor: '#6D28D9',
+  padding: 15,
+  marginTop:30,
+  marginHorizontal: 20,
+  borderRadius:10
 },
 btnTextoNuevaCita:{
-textAlign:'center',
-color: '#FFF',
-fontSize:18,
-fontWeight: '900',
-textTransform: 'uppercase'
+  textAlign:'center',
+  color: '#FFF',
+  fontSize:18,
+  fontWeight: '900',
+  textTransform: 'uppercase'
 },
 noPacientes:{
-marginTop: 40,
-textAlign: 'center',
-fontSize: 24,
-fontWeight: '60'
+  marginTop: 40,
+  textAlign: 'center',
+  fontSize: 24,
+  fontWeight: '60'
 },
 listado:{
   marginTop: 50,
