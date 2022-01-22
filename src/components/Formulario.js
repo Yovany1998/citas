@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
         borderColor: '#FFF'
     },
     btnCancelarTexto:{
-        color: 'FFF',
+        color: '#FFF',
         textAlign: 'center',
         fontWeight: '900',
         fontSize: 15,
@@ -262,9 +262,10 @@ const styles = StyleSheet.create({
         fontWeight:'60'
     },
     input:{
-        backgroundColor: '#6827A4',
+        backgroundColor: '#FFF',
         padding: 15,
         borderRadius:10,
+        color: '#000'
   
     },
     sintomasInput:{

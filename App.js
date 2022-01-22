@@ -148,7 +148,7 @@ noPacientes:{
   marginTop: 40,
   textAlign: 'center',
   fontSize: 24,
-  fontWeight: '60'
+  fontWeight: '600'
 },
 listado:{
   marginTop: 50,
