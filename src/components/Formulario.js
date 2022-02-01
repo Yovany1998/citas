@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal,
         Text,
-        Button,
         SafeAreaView,
         StyleSheet,
         TextInput,
@@ -78,6 +77,7 @@ const Formulario = ({
             pacienteState.id === nuevoPaciente.id ? nuevoPaciente: pacienteState
             )
             setPacientes(pacientesActualizados)
+            guardarCitasStorage(JSON.stringify(pacientesActualizados));
             setPacienteApp({})
         }else{
             //Nuevo registro

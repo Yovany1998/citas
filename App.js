@@ -37,13 +37,12 @@ useEffect(() => {
   obtenerCitasStorage();
  }, []);
 
+ 
   const pacienteEditar = id => {
   const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
 
   setPaciente(pacienteEditar[0])
   }
-
-
 
 
 const pacienteEliminar = id => {
