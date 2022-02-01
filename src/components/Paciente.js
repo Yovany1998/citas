@@ -59,7 +59,7 @@ contenedor: {
 
 },
 label: {
-color: '#374151',
+color: '#94A3B8',
 textTransform: 'uppercase',
 fontWeight: '700',
 marginBottom: 10
