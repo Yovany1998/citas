@@ -7,11 +7,14 @@ import {
   Modal,
   FlatList,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import Formulario from './src/components/Formulario';
 import Paciente from './src/components/Paciente';
 import InformacionPaciente from './src/components/InformacionPaciente';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 const App=  () => {
 //Los hooks se colocan en la parte superior
 const[modalVisible, setModalVisible] = useState(false)
@@ -19,11 +22,29 @@ const[pacientes,setPacientes] = useState([])
 const[paciente,setPaciente] = useState({})
 const [modalPaciente, setModalPaciente]= useState(false)
 
-const pacienteEditar = id => {
+
+useEffect(() => {
+  const obtenerCitasStorage= async () => {
+    try {
+      const citasStorage = await AsyncStorage.getItem('pacientes')
+      if(citasStorage){
+       setPacientes(JSON.parse(citasStorage))
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  obtenerCitasStorage();
+ }, []);
+
+  const pacienteEditar = id => {
   const pacienteEditar = pacientes.filter(paciente => paciente.id === id)
 
-setPaciente(pacienteEditar[0])
-}
+  setPaciente(pacienteEditar[0])
+  }
+
+
+
 
 const pacienteEliminar = id => {
   Alert.alert(
@@ -36,6 +57,8 @@ const pacienteEliminar = id => {
           pacientesState => pacientesState.id !== id
         )
         setPacientes(pacientesActualizados)
+        guardarCitasStorage(JSON.stringify(pacientesActualizados))
+
       }}
 
     ]
@@ -46,6 +69,18 @@ const pacienteEliminar = id => {
 const cerrarModal = () =>(
   setModalVisible(false)
 )
+
+const cerrarTeclado =() =>{
+    Keyboard.dismiss();
+}
+//Alamacenar las citas en storage
+const guardarCitasStorage = async (pacientesJSON) =>{
+  try {
+    await AsyncStorage.setItem('pacientes',pacientesJSON);
+  } catch (error) {
+    console.log(error);
+  }
+}
   return (
     <SafeAreaView style={styles.container}>
   <Text style={styles.titulo}>Administracion de citas {''}</Text>
@@ -82,19 +117,21 @@ const cerrarModal = () =>(
     
     }
 
+
     {/* Props para pasar datos de un formulario a otro */}
     {/* Lo ideal seria usar el modal para desmontarlo el solo, pero
     por si usamos un formulario lo condicionamos para que no siempre se monte */}
     {modalVisible && (
 
-<Formulario
-cerrarModal={cerrarModal}
-pacientes={pacientes}
-setPacientes={setPacientes}
-paciente = {paciente}
-setPaciente= {setPaciente}
+      <Formulario
+          guardarCitasStorage={guardarCitasStorage}
+          cerrarModal={cerrarModal}
+          pacientes={pacientes}
+          setPacientes={setPacientes}
+          paciente = {paciente}
+          setPaciente= {setPaciente}  
 
-/>
+      />
     )}
 
 
@@ -148,7 +185,8 @@ noPacientes:{
   marginTop: 40,
   textAlign: 'center',
   fontSize: 24,
-  fontWeight: '600'
+  fontWeight: '600',
+  color: '#000'
 },
 listado:{
   marginTop: 50,

@@ -17,11 +17,13 @@ import DatePicker from 'react-native-date-picker';
 
 const Formulario = ({
     modalVisible,
+    guardarCitasStorage,
     cerrarModal,
      setPacientes,
      pacientes, 
      paciente: pacienteObj,
-    setPaciente : setPacienteApp}) => {
+    setPaciente : setPacienteApp,
+   }) => {
     
  
     const [id, setId]= useState('')
@@ -68,6 +70,7 @@ const Formulario = ({
             sintomas
         }
 
+            
         if(id){
             //Editando
             nuevoPaciente.id = id
@@ -78,10 +81,13 @@ const Formulario = ({
             setPacienteApp({})
         }else{
             //Nuevo registro
-            nuevoPaciente.id =Date.now()
-            setPacientes([...pacientes, nuevoPaciente])
+            nuevoPaciente.id = Date.now()
+            const citasNuevo= ([...pacientes, nuevoPaciente]);
+            setPacientes(citasNuevo)
+            guardarCitasStorage(JSON.stringify(citasNuevo));
         }
 
+        
    
         cerrarModal()
         setId('')
@@ -259,7 +265,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 15,
         fontSize:20,
-        fontWeight:'60'
+        fontWeight:'600'
     },
     input:{
         backgroundColor: '#FFF',
