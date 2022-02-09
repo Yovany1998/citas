@@ -28,12 +28,10 @@ useEffect(() => {
   const obtenerCitasStorage= async () => {
     try {
       const citasStorage = await AsyncStorage.getItem('pacientes')
-      console.log(citasStorage.length);
       if(citasStorage){
        setPacientes(JSON.parse(citasStorage));
        if(citasStorage.length > 5){
         guardarContador(1);
-        console.log(contador);
        }
    
       }
