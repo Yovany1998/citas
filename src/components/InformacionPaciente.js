@@ -91,7 +91,7 @@ btnCerrar:{
    
 },
 btnCerrarTexto:{
-    color: 'FFF',
+    color: '#FFF',
     textAlign: 'center',
     fontWeight: '900',
     fontSize: 16,

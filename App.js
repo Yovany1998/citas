@@ -21,14 +21,21 @@ const[modalVisible, setModalVisible] = useState(false)
 const[pacientes,setPacientes] = useState([])
 const[paciente,setPaciente] = useState({})
 const [modalPaciente, setModalPaciente]= useState(false)
+const [contador, guardarContador]= useState(0)
 
 
 useEffect(() => {
   const obtenerCitasStorage= async () => {
     try {
       const citasStorage = await AsyncStorage.getItem('pacientes')
+      console.log(citasStorage.length);
       if(citasStorage){
-       setPacientes(JSON.parse(citasStorage))
+       setPacientes(JSON.parse(citasStorage));
+       if(citasStorage.length > 5){
+        guardarContador(1);
+        console.log(contador);
+       }
+   
       }
     } catch (error) {
       console.log(error);
@@ -108,6 +115,7 @@ const guardarCitasStorage = async (pacientesJSON) =>{
       pacienteEditar={pacienteEditar}
       pacienteEliminar={pacienteEliminar}
       setModalPaciente={setModalPaciente}
+      contador={contador}
       />
         )
     } 
@@ -129,6 +137,7 @@ const guardarCitasStorage = async (pacientesJSON) =>{
           setPacientes={setPacientes}
           paciente = {paciente}
           setPaciente= {setPaciente}  
+          guardarContador={guardarContador}
 
       />
     )}

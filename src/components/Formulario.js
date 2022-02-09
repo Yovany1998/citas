@@ -22,8 +22,9 @@ const Formulario = ({
      pacientes, 
      paciente: pacienteObj,
     setPaciente : setPacienteApp,
+    guardarContador
    }) => {
-    
+   
  
     const [id, setId]= useState('')
     const [paciente,setPaciente]= useState('')
@@ -85,10 +86,10 @@ const Formulario = ({
             const citasNuevo= ([...pacientes, nuevoPaciente]);
             setPacientes(citasNuevo)
             guardarCitasStorage(JSON.stringify(citasNuevo));
+            guardarContador(0)
+           
         }
 
-        
-   
         cerrarModal()
         setId('')
         setPaciente('')
